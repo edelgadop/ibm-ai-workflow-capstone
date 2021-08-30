@@ -17,10 +17,13 @@ from logging import config
 import pandas as pd
 import requests
 
-config.fileConfig("../log_config.conf")
+from source.ingestion.preprocessing import process_dataframes
+
+config.fileConfig("../../log_config.conf")
 
 SOURCE_URL = "https://github.com/aavail/ai-workflow-capstone/archive/refs/heads/master.zip"
-DATA_DIR = r"../data"
+DATA_DIR = "../../data"
+LOAD_DIR = DATA_DIR + "/input"
 ZIP_FILENAME = "data_source_raw.zip"
 
 
@@ -70,15 +73,21 @@ def load_dataset(target_directory):
     base_dir = "{}/{}/".format(DATA_DIR, target_directory)
     raw_files = os.listdir(base_dir)
     logging.info("Creating pandas dataframes from source files ...")
-    raw_dataframes = []
+    dataframes = []
     for json_file in raw_files:
-        raw_dataframes.append(pd.read_json("{}/{}".format(base_dir, json_file)))
+        dataframes.append(pd.read_json("{}/{}".format(base_dir, json_file)))
         logging.debug("Successfully transformed %s to a pandas dataframe.", json_file)
-    logging.info("Finished processing input data (% files). ", len(raw_dataframes))
-    return raw_dataframes
+    logging.info("Finished processing input data (%d files). ", len(dataframes))
+    return dataframes
 
 
 if __name__ == "__main__":
     get_dataset_from_source(source_url=SOURCE_URL, target_file=ZIP_FILENAME)
     extract_zipfiles(ZIP_FILENAME, DATA_DIR)
-    dataframes = load_dataset("cs-train")
+    raw_dataframes = load_dataset("cs-train")
+    target_df = process_dataframes(raw_dataframes)
+    if not os.path.exists(LOAD_DIR):
+        os.mkdir(LOAD_DIR)
+    target_df.to_hdf(LOAD_DIR + "/cs-input.h5", key="target_df", mode="w")
+    logging.info("Saved processed dataframe to %s as cs-input.h5" % LOAD_DIR)
+
