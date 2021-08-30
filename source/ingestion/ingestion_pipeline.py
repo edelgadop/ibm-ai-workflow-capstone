@@ -90,4 +90,3 @@ if __name__ == "__main__":
         os.mkdir(LOAD_DIR)
     target_df.to_hdf(LOAD_DIR + "/cs-input.h5", key="target_df", mode="w")
     logging.info("Saved processed dataframe to %s as cs-input.h5" % LOAD_DIR)
-
