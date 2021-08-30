@@ -21,14 +21,17 @@ def describe_dataframes(dataframes):
     :return:
     """
     df_count = 0
-    for df in dataframes:
-        print("""
-        DataFrame {}
+    for data_frame in dataframes:
+        num_rows = data_frame.shape[0]
+        num_cols = data_frame.shape[1]
+        column_names = ",".join(data_frame.columns.values)
+        num_missing = data_frame.isnull().sum().sum()
+        print("""DataFrame {}
             - N rows: {}
             - N cols: {}
             - Column names: {}
             - Missing values: {}
-        """.format(df_count, df.shape[0], df.shape[1], ",".join(df.columns.values), df.isnull().sum().sum()))
+        """.format(df_count, num_rows, num_cols, column_names, num_missing))
         df_count += 1
 
 
@@ -42,8 +45,7 @@ def to_snake_case(string):
     groups_camel = re.findall(pattern_camel_case, string)
     if len(groups_camel) > 0:
         return groups_camel[0][0].lower() + "_" + groups_camel[0][1].lower()
-    else:
-        return string
+    return string
 
 
 def process_dataframes(dataframes):
@@ -62,5 +64,5 @@ def process_dataframes(dataframes):
             df_new.rename(columns={"total_price": "price"}, inplace=True)
         processed.append(df_new)
     df_target = pd.concat(processed)
-    logging.info("Finished processing. Target dataframe size: %d x %d." % (df_target.shape[0], df_target.shape[1]))
+    logging.info("Finished processing (total: %d rows x %d columns)" % (df_target.shape[0], df_target.shape[1]))
     return df_target
