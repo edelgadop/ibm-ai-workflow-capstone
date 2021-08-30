@@ -17,12 +17,12 @@ from logging import config
 import pandas as pd
 import requests
 
-from source.ingestion.preprocessing import process_dataframes
+from source.main.ingestion.preprocessing import process_dataframes
 
-config.fileConfig("../../log_config.conf")
+config.fileConfig(os.environ["BASE_DIR"] + "/log_config.conf")
 
 SOURCE_URL = "https://github.com/aavail/ai-workflow-capstone/archive/refs/heads/master.zip"
-DATA_DIR = "../../data"
+DATA_DIR = os.environ["BASE_DIR"] + "/data"
 LOAD_DIR = DATA_DIR + "/input"
 ZIP_FILENAME = "data_source_raw.zip"
 
