@@ -19,12 +19,8 @@ import requests
 
 from source.main.ingestion.preprocessing import process_dataframes
 
-config.fileConfig(os.environ["BASE_DIR"] + "/log_config.conf")
 
 SOURCE_URL = "https://github.com/aavail/ai-workflow-capstone/archive/refs/heads/master.zip"
-DATA_DIR = os.environ["BASE_DIR"] + "/data"
-LOAD_DIR = DATA_DIR + "/input"
-ZIP_FILENAME = "data_source_raw.zip"
 
 
 def get_dataset_from_source(source_url, target_file="target.zip"):
@@ -81,7 +77,13 @@ def load_dataset(target_directory):
     return dataframes
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
+    config.fileConfig(os.environ["BASE_DIR"] + "/log_config.conf")
+
+    DATA_DIR = os.environ["BASE_DIR"] + "/data"
+    LOAD_DIR = DATA_DIR + "/input"
+    ZIP_FILENAME = "data_source_raw.zip"
+
     get_dataset_from_source(source_url=SOURCE_URL, target_file=ZIP_FILENAME)
     extract_zipfiles(ZIP_FILENAME, DATA_DIR)
     raw_dataframes = load_dataset("cs-train")
