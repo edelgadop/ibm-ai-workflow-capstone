@@ -57,12 +57,12 @@ def process_dataframes(dataframes):
     """
     logging.info("Processing raw dataframes ... ")
     processed = []
-    for df in dataframes:
-        df_new = df.copy()
-        df_new.columns = [to_snake_case(column) for column in df.columns.values]
+    for data_frame in dataframes:
+        df_new = data_frame.copy()
+        df_new.columns = [to_snake_case(column) for column in data_frame.columns.values]
         if "total_price" in df_new.columns:
             df_new.rename(columns={"total_price": "price"}, inplace=True)
         processed.append(df_new)
     df_target = pd.concat(processed)
-    logging.info("Finished processing (total: %d rows x %d columns)" % (df_target.shape[0], df_target.shape[1]))
+    logging.info("Finished processing")
     return df_target
